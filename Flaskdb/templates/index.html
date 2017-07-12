@@ -1,0 +1,8 @@
+{% extends "layout.html" %}
+{% block body %}
+<h1>Phonebook:</h1>
+{% for p in persons %}
+<p><b>{{p.name}}</b> - {{p.phone}}</p>
+{% endfor %}
+<a href="/create">Add new person</a>
+{% endblock %}
