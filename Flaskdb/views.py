@@ -1,7 +1,20 @@
-from flask import Flask, render_template, url_for, request, redirect, flash
+from flask import Flask, render_template, url_for, request, redirect, flash, session, g
 from Flaskdb import app
+from functools import wraps
 from .person import db, Person
 from .personforms import PersonForm
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        try:
+                if session['logged_in'] == False:
+                        return redirect(url_for('login', next=request.url))
+        except KeyError:
+                return redirect(url_for('login', next=request.url))
+        return f(*args, **kwargs)
+    return decorated_function
 
 @app.route('/')
 def index():
@@ -23,3 +36,13 @@ def create():
                         flash('Person added to phonebook.')
                         return redirect(url_for('index'))
         return render_template('create.html', form=form)
+
+@app.route('/teste')
+@login_required
+def teste():
+        flash('Done!')
+        return redirect(url_for('index'))
+
+@app.route('/login')
+def login():
+        session['logged_in'] = True      
